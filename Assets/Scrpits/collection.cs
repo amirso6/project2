@@ -9,16 +9,25 @@ public class collection : MonoBehaviour
     [SerializeField] Text overText;
     [SerializeField] Text WonText;
     [SerializeField] Text hintText;
+    [SerializeField] Text sprintText;
     [SerializeField] Button replay;
     [SerializeField] Button exit;
     [SerializeField] int maxScore;
-    public int score=0;
+    private int score=0;
+    public int runSpeed=0;
 
     void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.tag == "collectable"){
             collision.gameObject.SetActive(false);
             score+=1;
             scoreText.text = "Score: "+score;
+        }
+        if (collision.gameObject.tag == "SpeedUp"){
+            if(runSpeed==0){
+                StartCoroutine(SprintUnlock());
+            }
+            collision.gameObject.SetActive(false);
+            runSpeed+=1;
         }
         if (collision.gameObject.tag == "End"){
             if(score<maxScore){
@@ -39,6 +48,12 @@ public class collection : MonoBehaviour
             Cursor.visible =true;
             Time.timeScale = 0f;
         }
+    }
+
+    IEnumerator SprintUnlock(){
+        sprintText.gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(2);
+        sprintText.gameObject.SetActive(false);
     }
 
     void OnCollisionExit(Collision collision) {
